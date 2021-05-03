@@ -62,3 +62,8 @@ no_bw_ax.set_title("ECG Signal")
 no_bw_ax.set_ylabel('uV')
 no_bw_ax.set_xlabel('time (ms)')
 
+coeffs2 = pywt.wavedec(ppg_signal, 'db8', level=8)
+dwt2_fig, dwt2_axs = plt.subplots(9)
+dwt2_fig.suptitle('PPG signal decomposition')
+for i in range(9):
+    dwt2_axs[i].plot(np.arange(coeffs2[i].size), coeffs2[i])
