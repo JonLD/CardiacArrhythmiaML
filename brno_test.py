@@ -41,6 +41,21 @@ ppg_ax.set_title("PPG Signal")
 ppg_ax.set_ylabel('Amplitude')
 ppg_ax.set_xlabel('time (s/30)')
 
+#getting min and max value in ppg to normalise it
+# then using (value-min)/(max-min) will normalise it between 0 and 1
+#we choose to normalise in the personal data because the dataset have too big
+#differences in the values so if we used the maximum and minimum in the whole
+#data the small differences in the indivdual data would not be seen.
+minimum = np.min(ppg_signal)
+maximum = np.max(ppg_signal)
+
+ppg_signal_norm = (ppg_signal - minimum) / (maximum - minimum)
+ppg_fig_n, ppg_ax_n = plt.subplots()
+ppg_ax_n.plot(time2, ppg_signal_norm)
+ppg_ax_n.set_title("PPG Signal Normalised")
+ppg_ax_n.set_ylabel('Amplitude')
+ppg_ax_n.set_xlabel('time (s/30)')
+
 #removing baseline drift in ECG signal
 #could use empirical mode decomposition but I used a discreet wavelet transform
 #https://link.springer.com/content/pdf/10.1007%2F978-3-642-36321-4_47.pdf

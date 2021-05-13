@@ -37,6 +37,17 @@ def ProcessData(filenames, directory, target):
     ppg_ax.set_xlabel('time (s/30)')
     ppg_fig.savefig(os.path.join(target, filenames[1] + '.png'))
     
+    minimum = np.min(ppg_signal)
+    maximum = np.max(ppg_signal)
+
+    ppg_signal_norm = (ppg_signal - minimum) / (maximum - minimum)
+    ppg_fig_n, ppg_ax_n = plt.subplots()
+    ppg_ax_n.plot(time2, ppg_signal_norm)
+    ppg_ax_n.set_title("PPG Signal Normalised")
+    ppg_ax_n.set_ylabel('Amplitude')
+    ppg_ax_n.set_xlabel('time (s/30)')
+    ppg_fig_n.savefig(os.path.join(target, filenames[1] + 'normalised.png'))
+    
     coeffs = pywt.wavedec(ecg_signal, 'db8', level=8)
     dwt_fig, dwt_axs = plt.subplots(9)
     dwt_fig.suptitle('ECG signal decomposition')
@@ -52,7 +63,7 @@ def ProcessData(filenames, directory, target):
     dwt_fig.savefig(os.path.join(target, filenames[0] + 'decomposition.png'))
     no_bw_fig.savefig(os.path.join(target, filenames[0] + 'corrected.png'))
     np.save(os.path.join(target, filenames[0]), no_bw_signal)
-    np.save(os.path.join(target, filenames[1]), ppg_signal)
+    np.save(os.path.join(target, filenames[1]), ppg_signal_norm)
 
     coeffs2 = pywt.wavedec(ppg_signal, 'db8', level=8)
     dwt2_fig, dwt2_axs = plt.subplots(9)
