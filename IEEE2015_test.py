@@ -1,4 +1,4 @@
-1import scipy.io
+import scipy.io
 import numpy as np
 import matplotlib.pyplot as plt
 import pywt
@@ -108,4 +108,3 @@ ppg_train_ax2.plot(time2, ppg_train2)
 ppg_train_ax2.set_title("PPG Signal 1")
 ppg_train_ax2.set_ylabel('uV')
 ppg_train_ax2.set_xlabel('time (ms)')
-#
