@@ -3,6 +3,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 
+def plot(name, x_name, y_name, signal, x_range):
+    no_bw_fig, no_bw_ax = plt.subplots()
+    no_bw_ax.plot(x_range, signal)
+    no_bw_ax.set_title(name)
+    no_bw_ax.set_ylabel(y_name)
+    no_bw_ax.set_xlabel(x_name)
+    return no_bw_fig
+#        fig1 = plot('ECG Signal', 'Time (s)', 'Amplitude (mV)', ecg_array, time)
+#        fig2 = plot('ECG Signal Normalised', 'Time (s)', 'Amplitude', ecg_signal_norm, time)
+#        fig1.savefig(os.path.join(target, filename[:-4] + '.png'))
+#        fig2.savefig(os.path.join(target, filename[:-4] + '_normalised.png'))
+
+
+
 ecg = scipy.io.loadmat('D:/Arythmia PPG-ECG/physio2017/training2017/A00003.mat')
 cvs = 'D:/Arythmia PPG-ECG/physio2017/training2017/REFERENCE-v3.csv'
 sample_rate = 300
