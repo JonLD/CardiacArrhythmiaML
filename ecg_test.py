@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 import csv
 
 ecg = scipy.io.loadmat('D:/Arythmia PPG-ECG/physio2017/training2017/A00003.mat')
-
+cvs = 'D:/Arythmia PPG-ECG/physio2017/training2017/REFERENCE-v3.csv'
 sample_rate = 300
 max_length = 30 * sample_rate
 #let's plot the data we have
 time = np.linspace(0, ecg['val'][0].size/sample_rate, ecg['val'][0].size)
 ecg_fig, ecg_ax = plt.subplots()
 ecg_ax.plot(time, ecg['val'][0])
-ecg_ax.set_title("ECG Signal")
+ecg_ax.set_title('ECG Signal')
 ecg_ax.set_ylabel('Amplitude (mV)')
 ecg_ax.set_xlabel('time (s)')
 
@@ -21,10 +21,20 @@ maximum = np.max(ecg['val'][0])
 ecg_signal_norm = (ecg['val'][0] - minimum) / (maximum - minimum)
 ecg_fig_n, ecg_ax_n = plt.subplots()
 ecg_ax_n.plot(time, ecg_signal_norm)
-ecg_ax_n.set_title("ECG Signal Normalised")
+ecg_ax_n.set_title('ECG Signal Normalised')
 ecg_ax_n.set_ylabel('Amplitude')
 ecg_ax_n.set_xlabel('time (s)')
 
+#just for padding the ecgs if they shorter than 30s
+#if they longer then splitting them and padding them
+#plus adding a padded label to the padded ones
+#reading out the labels from the csv file
+labels = {}
+with open(cvs, newline='') as csvfile:
+    spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+    for row in spamreader:
+        labels[row[0][4:-2]] = row[0][-1:]
+print(labels)
 if(ecg['val'][0].size < max_length):
     ecg_seq = np.array(ecg['val'][0])
     ecg_seq = np.pad(ecg_seq, (0, max_length - ecg['val'][0].size), 'constant')
@@ -41,4 +51,3 @@ if(ecg['val'][0].size > max_length):
     
 if(ecg['val'][0].size == max_length):
     pass
-
