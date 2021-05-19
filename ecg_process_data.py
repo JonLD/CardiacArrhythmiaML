@@ -107,6 +107,6 @@ for i,file in enumerate(train_data):
     print(i)
 
 df = pd.DataFrame(ecg_dataframe)
-df.to_csv(target_dir + "train.cvs")
+df.to_csv(target_dir + "train.csv")
 df = pd.DataFrame(ecg_dataframe_normalised)
-df.to_csv(target_dir + "train_normalised.cvs")
+df.to_csv(target_dir + "train_normalised.csv")
