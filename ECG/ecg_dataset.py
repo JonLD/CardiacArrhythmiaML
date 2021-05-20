@@ -1,6 +1,6 @@
 import scipy.io
 import os.path
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 
 class ECGDataset(Dataset):
     training_file = 'trainingset.mat'

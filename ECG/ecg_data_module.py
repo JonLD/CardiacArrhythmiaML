@@ -1,39 +1,73 @@
-from torch.utils.data import DataLoader
-from ecg_dataset import ECGDataset
+import torch
 import pytorch_lightning as pl
+from torch.utils.data import DataLoader, random_split
+from ecg_dataset import ECGDataset
 
 class ECGDataModule(pl.LightningDataModule):
 
-    def __init__(self, data_dir: str = './'):
-        super().__init__()
+    def __init__(
+            self,
+            data_dir: str = './',
+            val_split: int = 1279,
+            num_workers: int = 16,
+            batch_size: int = 32,
+            seed: int = 42,
+            normalize: bool = True,
+            *args,
+            **kwargs
+            ):
+        super().__init__(*args, **kwargs)
         self.data_dir = data_dir
-
-    def setup(self, stage: Optional[str] = None):
-
-        # Assign train/val datasets for use in dataloaders
-        if stage == 'fit' or stage is None:
-            ecg_full = ECGDataset(self.data_dir, train=True, normal=True)
-            self.ecg_train, self.ecg_val = random_split(ecg_full, [55000, 5000])
-
-            # Optionally...
-            # self.dims = tuple(self.mnist_train[0][0].shape)
-
-        # Assign test dataset for use in dataloader(s)
-        if stage == 'test' or stage is None:
-            self.ecg_test = ECGDataset(self.data_dir, train=False, normal=True)
-
-            # Optionally...
-            # self.dims = tuple(self.mnist_test[0][0].shape)
+        self.num_workers = num_workers
+        self.seed = seed
+        self.val_split = val_split
+        self.normalize = normalize
+        self.batch_size = batch_size
 
     def train_dataloader(self):
-        return DataLoader(self.ecg_train, batch_size=32)
+        ecg_full = ECGDataset(self.data_dir, 300, 30, train=True, normal=self.normalize)
+        train_length = len(ecg_full)
+        ecg_train, _ = random_split(
+            ecg_full,
+            [train_length - self.val_split, self.val_split],
+            generator=torch.Generator().manual_seed(self.seed)
+        )
+        loader = DataLoader(
+            ecg_train,
+            batch_size=self.batch_size,
+            shuffle=True,
+            num_workers=self.num_workers,
+            drop_last=True,
+            pin_memory=True
+        )
+        return loader
 
     def val_dataloader(self):
-        return DataLoader(self.ecg_val, batch_size=32)
+        ecg_full = ECGDataset(self.data_dir, 300, 30, train=True, normal=self.normalize)
+        train_length = len(ecg_full)
+        _, ecg_val = random_split(
+            ecg_full,
+            [train_length - self.val_split, self.val_split],
+            generator=torch.Generator().manual_seed(self.seed)
+        )
+        loader = DataLoader(
+            ecg_val,
+            batch_size=self.batch_size,
+            shuffle=False,
+            num_workers=self.num_workers,
+            drop_last=True,
+            pin_memory=True
+        )
+        return loader
 
     def test_dataloader(self):
-        return DataLoader(self.ecg_test, batch_size=32)
-    
-training_data = ECGDataset('trainingset.mat', 300, 30)
-train_dataloader = DataLoader(training_data, batch_size=64, shuffle=True)
-train_features, train_labels = next(iter(train_dataloader))
+        ecg_full = ECGDataset(self.data_dir, 300, 30, train=False, normal=self.normalize)
+        loader = DataLoader(
+            ecg_full,
+            batch_size=self.batch_size,
+            shuffle=False,
+            num_workers=self.num_workers,
+            drop_last=True,
+            pin_memory=True
+        )
+        return loader

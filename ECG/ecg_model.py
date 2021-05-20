@@ -1,11 +1,11 @@
+import torch
 from pytorch_lightning.core.lightning import LightningModule
 from torch import nn
 from torch.nn import functional as F
 from torchmetrics.functional import accuracy
-import torch
 
 class MLECG(LightningModule):
-    def __init__(self, config, cell_count):
+    def __init__(self, config):
         super().__init__()
         self.target_class = 4
         self.kernel_size = 11
@@ -14,11 +14,12 @@ class MLECG(LightningModule):
         self.dropout = 0.1
         self.batch_size = config["batch_size"]
         self.lr = config["lr"]
+        self.cell_count = config["lstm_size"]
         
         self.layer1 = nn.Conv1d(1, 1, self.kernel_size)
         self.bnorm1 = nn.BatchNorm1d(1, self.epsilon, self.momentum, affine=False)
         self.maxp =  nn.MaxPool1d(10)
-        self.rnn = nn.LSTM(1, self.target_class, cell_count, dropout=self.dropout, batch_first=True)
+        self.rnn = nn.LSTM(1, self.target_class, self.cell_count, dropout=self.dropout, batch_first=True)
         self.dense = nn.Linear(899, 1)
     
     def forward(self, x):
@@ -64,8 +65,8 @@ class MLECG(LightningModule):
         
         # validation metrics
         acc = accuracy(logits, y)
-        self.log('val_loss', loss, prog_bar=True)
-        self.log('val_acc', acc, prog_bar=True)
+        self.log('test_loss', loss, prog_bar=True)
+        self.log('test_acc', acc, prog_bar=True)
         return loss
     
     def validation_epoch_end(self, outputs):
@@ -73,5 +74,5 @@ class MLECG(LightningModule):
             [x["val_loss"] for x in outputs]).mean()
         avg_acc = torch.stack(
             [x["val_accuracy"] for x in outputs]).mean()
-        self.log("avg_val_loss", avg_loss)
-        self.log("avg_/val_accuracy", avg_acc)
+        self.log("ptl/val_loss", avg_loss)
+        self.log("ptl/val_accuracy", avg_acc)
