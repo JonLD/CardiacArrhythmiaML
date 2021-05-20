@@ -3,7 +3,6 @@ import numpy as np
 import glob
 import csv
 from tqdm import tqdm
-from sklearn import preprocessing
 
 # Parameters
 physio2017_train = "D:/Arythmia PPG-ECG/physio2017/training2017/"
