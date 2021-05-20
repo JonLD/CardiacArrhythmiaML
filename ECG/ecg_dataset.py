@@ -1,10 +1,33 @@
 import scipy.io
+import os.path
 from torch.utils.data import Dataset, DataLoader
 
 class ECGDataset(Dataset):
-    def __init__(self, data, sample_rate, time_length):
+    training_file = 'trainingset.mat'
+    training_file_normalsied = 'trainingset_normalised.mat'
+    test_file = 'testset.mat'
+    test_file_normalsied = 'testset_normalised.mat'
+    def __init__(
+            self,
+            folder,
+            sample_rate,
+            time_length,
+            train: bool = True,
+            normal: bool = True):
+        self.train = train
+        self.normal = normal
         self.seq_length = time_length*sample_rate
-        self.data = self.loaddata(data)
+        if self.train:
+            if self.normal:
+                data_file = self.training_file_normalsied
+            else:
+                data_file = self.training_file
+        else:
+            if self.normal:
+                data_file = self.test_file_normalsied
+            else:
+                data_file = self.test_file
+        self.data = self.loaddata(os.path.join(folder, data_file))
         
 
     def __len__(self):
@@ -28,7 +51,3 @@ class ECGDataset(Dataset):
 
         X =  X[:,0:self.seq_length] 
         return (X, Y)
-    
-training_data = ECGDataset('trainingset.mat', 300, 30)
-train_dataloader = DataLoader(training_data, batch_size=64, shuffle=True)
-train_features, train_labels = next(iter(train_dataloader))

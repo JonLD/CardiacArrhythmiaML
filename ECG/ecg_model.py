@@ -5,14 +5,14 @@ from torchmetrics.functional import accuracy
 import torch
 
 class MLECG(LightningModule):
-    def __init__(self, cell_count, batch_size, config):
+    def __init__(self, config, cell_count):
         super().__init__()
         self.target_class = 4
         self.kernel_size = 11
         self.momentum = 0.99
         self.epsilon = 0.001
         self.dropout = 0.1
-        self.batch_size = batch_size
+        self.batch_size = config["batch_size"]
         self.lr = config["lr"]
         
         self.layer1 = nn.Conv1d(1, 1, self.kernel_size)
