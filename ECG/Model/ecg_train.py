@@ -5,10 +5,12 @@ from ecg_model import MLECG
 from ecg_data_module import ECGDataModule
 from ray import tune
 
-def train_ecg(config, data_dir=None, num_epochs=10, num_gpus=0):
+def train_ecg(config, data_dir=None, num_epochs=10, normalised = True, num_gpus=0):
     model = MLECG(config)
+    if(normalised):
+        model = model.float()
     dm = ECGDataModule(
-        data_dir=data_dir, num_workers=1, batch_size=config["batch_size"])
+        data_dir=data_dir, num_workers=1, batch_size=config["batch_size"], normalised=normalised)
     metrics = {"loss": "ptl/val_loss", "acc": "ptl/val_accuracy"}
     trainer = pl.Trainer(
         max_epochs=num_epochs,
@@ -19,7 +21,7 @@ def train_ecg(config, data_dir=None, num_epochs=10, num_gpus=0):
     trainer.fit(model, dm)
     
 config = {
- "lstm_size": tune.choice([1, 2, 3, 4, 5]),
+ "lstm_size": tune.choice([2, 3, 4, 5, 32, 64, 128]),
  "lr": tune.loguniform(1e-4, 1e-1),
  "batch_size": tune.choice([32, 64, 128, 256, 512])
 }
@@ -30,7 +32,7 @@ gpus_per_trial = 1 # set this to higher if using GPU
 
 trainable = tune.with_parameters(
     train_ecg,
-    data_dir=None,
+    data_dir='D:/CardioML/ECG/',
     num_epochs=num_epochs,
     num_gpus=gpus_per_trial)
 
@@ -44,6 +46,6 @@ analysis = tune.run(
     mode="min",
     config=config,
     num_samples=num_samples,
-    name="tune_mnist")
+    name="tune_ecg")
 
 print(analysis.best_config)

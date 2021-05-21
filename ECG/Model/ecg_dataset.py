@@ -1,5 +1,6 @@
 import scipy.io
 import os.path
+import torch
 from torch.utils.data import Dataset
 
 class ECGDataset(Dataset):
@@ -39,7 +40,7 @@ class ECGDataset(Dataset):
     def loaddata(self, data):    
 #        Load training/test data into workspace        
 #        This function assumes you have downloaded and padded/truncated the 
-#        training set into a local file named "trainingset.mat". This file should 
+#        training set into a local file with ecg_process_data.py. This file should 
 #        contain the following structures:
 #            - trainset: NxM matrix of N ECG segments with length M
 #            - traintarget: Nx4 matrix of coded labels where each column contains
@@ -49,5 +50,12 @@ class ECGDataset(Dataset):
         X = matfile['trainset']
         Y = matfile['traintarget']
 
-        X =  X[:,0:self.seq_length] 
+        X =  X[:,0:self.seq_length]
+        X = torch.tensor(X)
+        X = X.reshape(X.shape[0], 1, self.seq_length)
+        Y = torch.tensor(Y)
+        Y = Y.reshape(Y.shape[0], 4)
+        Y = Y.int()
+        if(self.normal):
+            X = X.float()
         return (X, Y)

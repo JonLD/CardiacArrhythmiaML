@@ -1,0 +1,5 @@
+ray==1.1.0
+torch==1.8.1
+torchmetrics==0.3.2
+pytorch_lightning==1.2.10
+scipy==1.6.2
