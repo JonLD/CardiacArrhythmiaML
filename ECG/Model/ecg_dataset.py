@@ -47,8 +47,8 @@ class ECGDataset(Dataset):
 #            one in case it matches ['A', 'N', 'O', '~'].
              
         matfile = scipy.io.loadmat(data)
-        X = matfile['trainset']
-        Y = matfile['traintarget']
+        X = matfile['data']
+        Y = matfile['target']
 
         X =  X[:,0:self.seq_length]
         X = torch.tensor(X)

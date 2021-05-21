@@ -91,3 +91,7 @@ class MLECG(LightningModule):
             [x["val_accuracy"] for x in validation_step_outputs]).mean()
         self.log("ptl/val_loss", avg_loss)
         self.log("ptl/val_accuracy", avg_acc)
+    
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
+        return optimizer
