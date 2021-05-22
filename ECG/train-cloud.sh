@@ -23,7 +23,7 @@ JOB_NAME=ecg_job_$(date +%Y%m%d_%H%M%S)
 # or use the default '`us-central1`'. The region is where the model will be deployed.
 REGION=us-central1
 
-IMAGE_URI=gcr.io/ml-projects-314319/mlmodel@sha256:b1c5d9ad398931234c7cb2c73eaaedfcb203b878e898c39d4e0ce4f95de60626
+IMAGE_URI=gcr.io/ml-projects-314319/mlmodel
 
 # Submit your training job
 echo "Submitting the training job"
