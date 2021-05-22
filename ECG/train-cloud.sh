@@ -38,8 +38,7 @@ gcloud beta ai-platform jobs submit training ${JOB_NAME} \
     --scale-tier BASIC_GPU \
     -- \
     --data_dir ${DATA_DIR} \
-    --num-epochs=50 \
-    --batch-size=100
+    --num-epochs=50
 
 # Stream the logs from the job
 gcloud ai-platform jobs stream-logs ${JOB_NAME}
