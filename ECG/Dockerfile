@@ -22,6 +22,7 @@ RUN pip install pandas google-cloud-storage tabulate
 
 # Installs Pytorch Lightning, Ray, Torchmetrics and scipy
 RUN pip install pytorch_lightning torchmetrics scipy ray
+RUN pip install "ray[default]"
 RUN pip install "ray[tune]"
 
 # You can modify this by changing the arguments passed into the Dockerfile
