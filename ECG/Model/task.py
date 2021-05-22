@@ -14,7 +14,7 @@
 
 import argparse
 
-import ecg_train
+from ecg_train import tune_ecg
 
 
 def get_args():
@@ -68,8 +68,7 @@ def main():
     """Setup / Start the experiment
     """
     args = get_args()
-    print(args)
-#    tune_ecg(args)
+    tune_ecg(args)
 
 
 if __name__ == '__main__':
