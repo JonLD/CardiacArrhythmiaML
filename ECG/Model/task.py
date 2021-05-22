@@ -26,7 +26,7 @@ def get_args():
 
     # Data files arguments
     args_parser.add_argument(
-        '--data_dir',
+        '--data-dir',
         help='GCS or local paths to training data',
         nargs='+',
         required=True)
@@ -68,7 +68,7 @@ def main():
     """Setup / Start the experiment
     """
     args = get_args()
-    tune_ecg(args)
+    tune_ecg(args.data_dir, num_epochs=args.num_epochs, normalised=args.normalised, num_samples=args.num_samples)
 
 
 if __name__ == '__main__':
