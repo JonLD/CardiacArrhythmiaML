@@ -5,25 +5,28 @@ from ecg_data_module import ECGDataModule
 from ray import tune
 from ray.tune import CLIReporter
 from ray.tune.integration.pytorch_lightning import TuneReportCheckpointCallback
+from pytorch_lightning.callbacks import EarlyStopping, ProgressBar
 
-def train_ecg(config, data_dir=None, num_epochs=10, normalised = True, num_gpus=0):
+def train_ecg(config, data_dir=None, num_epochs=10, normalised = True, num_gpus=1):
     model = MLECG(config)
     if(normalised):
         model = model.float()
     dm = ECGDataModule(
-        data_dir=data_dir, num_workers=6, batch_size=config["batch_size"], normalised=normalised)
+        data_dir=data_dir, num_workers=8, batch_size=config["batch_size"], normalised=normalised)
     metrics = {"loss": "ptl/val_loss", "mean_accuracy": "ptl/val_accuracy"}
+    bar = ProgressBar()
     trainer = pl.Trainer(
         max_epochs=num_epochs,
         # If fractional GPUs passed in, convert to int.
         gpus=math.ceil(num_gpus),
-        progress_bar_refresh_rate=0,    
-        callbacks=[
-            TuneReportCheckpointCallback(
-                metrics=metrics,
-                filename="checkpoint",
-                on="validation_end")
-        ])
+        progress_bar_refresh_rate=0,
+        callbacks=[EarlyStopping(patience=10, monitor='ptl/val_loss'),bar]
+#            TuneReportCheckpointCallback(
+#                metrics=metrics,
+#                filename="checkpoint",
+#                on="validation_end")
+#        ]
+        )
     trainer.fit(model, dm)
 
 
@@ -57,7 +60,7 @@ def tune_ecg(data_dir, num_epochs=1, normalised = True, num_samples=10, gpus_per
     analysis = tune.run(
         trainable,
         resources_per_trial={
-            "cpu": 6,
+            "cpu": 16,
             "gpu": gpus_per_trial
         },
         metric="loss",
@@ -70,3 +73,10 @@ def tune_ecg(data_dir, num_epochs=1, normalised = True, num_samples=10, gpus_per
         name="tune_ecg")
 
     print("Best hyperparameters found were: ", analysis.best_config)
+config = {
+         "lstm_size": 3,
+         "lr": 0.001,
+         "batch_size": 128
+        }
+if __name__ == '__main__':
+    train_ecg(config, data_dir="C:/MPhys_project/Istvan_Jon/CardioML/ECG/Model/trainingset_normalised.mat", num_epochs=50, normalised=True)

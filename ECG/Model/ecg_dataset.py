@@ -4,13 +4,9 @@ import torch
 from torch.utils.data import Dataset
 
 class ECGDataset(Dataset):
-    training_file = 'trainingset.mat'
-    training_file_normalsied = 'trainingset_normalised.mat'
-    test_file = 'testset.mat'
-    test_file_normalsied = 'testset_normalised.mat'
     def __init__(
             self,
-            folder,
+            data_file,
             sample_rate,
             time_length,
             train: bool = True,
@@ -18,17 +14,7 @@ class ECGDataset(Dataset):
         self.train = train
         self.normal = normal
         self.seq_length = time_length*sample_rate
-        if self.train:
-            if self.normal:
-                data_file = self.training_file_normalsied
-            else:
-                data_file = self.training_file
-        else:
-            if self.normal:
-                data_file = self.test_file_normalsied
-            else:
-                data_file = self.test_file
-        self.data = self.loaddata(os.path.join(folder, data_file))
+        self.data = self.loaddata(data_file)
         
 
     def __len__(self):
