@@ -11,7 +11,7 @@ def train_ecg(config, data_dir=None, num_epochs=10, normalised = True, num_gpus=
     if(normalised):
         model = model.float()
     dm = ECGDataModule(
-        data_dir=data_dir, num_workers=1, batch_size=config["batch_size"], normalised=normalised)
+        data_dir=data_dir, num_workers=6, batch_size=config["batch_size"], normalised=normalised)
     metrics = {"loss": "ptl/val_loss", "mean_accuracy": "ptl/val_accuracy"}
     trainer = pl.Trainer(
         max_epochs=num_epochs,
@@ -57,7 +57,7 @@ def tune_ecg(data_dir, num_epochs=1, normalised = True, num_samples=10, gpus_per
     analysis = tune.run(
         trainable,
         resources_per_trial={
-            "cpu": 1,
+            "cpu": 6,
             "gpu": gpus_per_trial
         },
         metric="loss",
