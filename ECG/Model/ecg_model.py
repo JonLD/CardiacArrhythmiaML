@@ -85,7 +85,9 @@ class MLECG(LightningModule):
             [x["loss"] for x in training_step_outputs]).mean()
         avg_acc = torch.stack(
             [x["train_accuracy"] for x in training_step_outputs]).mean()
-        self.log("ptl/train_f_score", training_step_outputs[-1]["f_score"])
+        avg_f = torch.stack(
+            [x["f_score"] for x in training_step_outputs]).mean()
+        self.log("ptl/train_f_score", avg_f)
         self.log("ptl/train_loss", avg_loss)
         self.log("ptl/train_accuracy", avg_acc)
     
@@ -94,6 +96,8 @@ class MLECG(LightningModule):
             [x["val_loss"] for x in validation_step_outputs]).mean()
         avg_acc = torch.stack(
             [x["val_accuracy"] for x in validation_step_outputs]).mean()
-        self.log("ptl/f_score", validation_step_outputs[-1]["f_score"])
+        avg_f = torch.stack(
+            [x["f_score"] for x in validation_step_outputs]).mean()
+        self.log("ptl/f_score", avg_f)
         self.log("ptl/val_loss", avg_loss)
         self.log("ptl/val_accuracy", avg_acc)

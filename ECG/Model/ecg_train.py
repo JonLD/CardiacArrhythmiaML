@@ -73,10 +73,27 @@ def tune_ecg(data_dir, num_epochs=1, normalised = True, num_samples=10, gpus_per
         name="tune_ecg")
 
     print("Best hyperparameters found were: ", analysis.best_config)
-config = {
+c0 = {
          "lstm_size": 3,
          "lr": 0.001,
          "batch_size": 128
         }
+c1 = {
+         "lstm_size": 2,
+         "lr": 0.001,
+         "batch_size": 128
+        }
+c2 = {
+         "lstm_size": 4,
+         "lr": 0.001,
+         "batch_size": 128
+        }
+c3 = {
+         "lstm_size": 5,
+         "lr": 0.001,
+         "batch_size": 128
+        }
+list1 = [c0,c1,c2,c3]
 if __name__ == '__main__':
-    train_ecg(config, data_dir="C:/MPhys_project/Istvan_Jon/CardioML/ECG/Model/trainingset_normalised.mat", num_epochs=50, normalised=True)
+    for i in list1:
+        train_ecg(i, data_dir="C:/MPhys_project/Istvan_Jon/CardioML/ECG/Model/trainingset_normalised.mat", num_epochs=9999, normalised=True)
