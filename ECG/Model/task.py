@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import argparse
-
+import os.path
 from ecg_train import tune_ecg
 
 
@@ -28,8 +28,8 @@ def get_args():
     args_parser.add_argument(
         '--data-dir',
         help='GCS or local paths to training data',
-        nargs='+',
-        required=True)
+        default='trainingset_normalised.mat',
+        type=str)
 
     # Experiment arguments
     args_parser.add_argument(
@@ -62,7 +62,6 @@ def get_args():
     )
 
     return args_parser.parse_args()
-
 
 def main():
     """Setup / Start the experiment

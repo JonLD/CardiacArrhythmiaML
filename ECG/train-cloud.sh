@@ -30,14 +30,14 @@ echo "Submitting the training job"
 
 # These variables are passed to the docker image
 # Note: these files have already been copied over when the image was built
-DATA_DIR=./
+DATA_DIR=/root
 
 gcloud beta ai-platform jobs submit training ${JOB_NAME} \
     --region ${REGION} \
     --master-image-uri ${IMAGE_URI} \
     --scale-tier BASIC_GPU \
     -- \
-    --data_dir ./ \
+	--data-dir ${DATA_DIR} \
     --num-epochs=50
 
 # Stream the logs from the job
