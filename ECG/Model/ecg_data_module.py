@@ -61,7 +61,7 @@ class ECGDataModule(pl.LightningDataModule):
         return loader
 
     def test_dataloader(self):
-        ecg_full = ECGDataset(self.data_dir, 300, 30, train=False, normal=self.normalised)
+        ecg_full = ECGDataset(self.data_dir, 300, 30, train=True, normal=self.normalised)
         loader = DataLoader(
             ecg_full,
             batch_size=self.batch_size,

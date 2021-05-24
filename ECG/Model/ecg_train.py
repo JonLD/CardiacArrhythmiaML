@@ -1,5 +1,6 @@
 import pytorch_lightning as pl
 import math
+import torch
 from ecg_model import MLECG
 from ecg_data_module import ECGDataModule
 from ray import tune
@@ -28,6 +29,22 @@ def train_ecg(config, data_dir=None, num_epochs=10, normalised = True, num_gpus=
 #        ]
         )
     trainer.fit(model, dm)
+    
+def test_ecg(data_dir=None, model_dir=None, h_dir=None, normalised = True, num_gpus=1):
+    dm = ECGDataModule(data_dir=data_dir, num_workers=8, batch_size=128, normalised=normalised)
+    trainer = pl.Trainer(gpus=math.ceil(num_gpus))
+    checkpoint = torch.load(model_dir, map_location=lambda storage, loc: storage)
+    c0 = {
+         "lstm_size": 5,
+         "lr": 0.001,
+         "batch_size": 128
+        }
+    model = MLECG(c0).float().load_from_checkpoint(
+    checkpoint_path=model_dir,
+    hparams_file=h_dir,
+    map_location=None, config=c0)
+    trainer.test(model=model, datamodule=dm)
+    
 
 
 def tune_ecg(data_dir, num_epochs=1, normalised = True, num_samples=10, gpus_per_trial=1):
@@ -95,5 +112,8 @@ c3 = {
         }
 list1 = [c0,c1,c2,c3]
 if __name__ == '__main__':
-    for i in list1:
-        train_ecg(i, data_dir="C:/MPhys_project/Istvan_Jon/CardioML/ECG/Model/trainingset_normalised.mat", num_epochs=9999, normalised=True)
+    test_ecg(data_dir="C:/MPhys_project/Istvan_Jon/CardioML/ECG/Model/testset_normalised.mat",
+             model_dir="C:\MPhys_project\Istvan_Jon\CardioML\ECG\Model\lightning_logs\et\checkpoints\epoch=142-step=8007.ckpt",
+             h_dir = "C:\MPhys_project\Istvan_Jon\CardioML\ECG\Model\lightning_logs\et\hparams.yaml")
+#    for i in list1:
+#        train_ecg(i, data_dir="C:/MPhys_project/Istvan_Jon/CardioML/ECG/Model/trainingset_normalised.mat", num_epochs=9999, normalised=True);
