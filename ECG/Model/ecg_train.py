@@ -112,8 +112,8 @@ c3 = {
         }
 list1 = [c0,c1,c2,c3]
 if __name__ == '__main__':
-    test_ecg(data_dir="C:/MPhys_project/Istvan_Jon/CardioML/ECG/Model/testset_normalised.mat",
-             model_dir="C:\MPhys_project\Istvan_Jon\CardioML\ECG\Model\lightning_logs\et\checkpoints\epoch=142-step=8007.ckpt",
-             h_dir = "C:\MPhys_project\Istvan_Jon\CardioML\ECG\Model\lightning_logs\et\hparams.yaml")
-#    for i in list1:
-#        train_ecg(i, data_dir="C:/MPhys_project/Istvan_Jon/CardioML/ECG/Model/trainingset_normalised.mat", num_epochs=9999, normalised=True);
+#    test_ecg(data_dir="C:/MPhys_project/Istvan_Jon/CardioML/ECG/Model/testset_normalised.mat",
+#             model_dir="C:\MPhys_project\Istvan_Jon\CardioML\ECG\Model\lightning_logs\et\checkpoints\epoch=142-step=8007.ckpt",
+#             h_dir = "C:\MPhys_project\Istvan_Jon\CardioML\ECG\Model\lightning_logs\et\hparams.yaml")
+    for i in list1:
+        train_ecg(i, data_dir="C:/MPhys_project/Istvan_Jon/CardioML/ECG/Model/trainingset_normalised.mat", num_epochs=9999, normalised=True);

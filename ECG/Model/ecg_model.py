@@ -17,15 +17,15 @@ class MLECG(LightningModule):
         
         self.layer1 = nn.Conv1d(1, 16, self.kernel_size)
         self.bnorm1 = nn.BatchNorm1d(16)
-        self.maxp =  nn.MaxPool1d(2)
+        self.maxp =  nn.MaxPool1d(10)
         self.layer2 = nn.Conv1d(16, 32, self.kernel_size)
         self.bnorm2 = nn.BatchNorm1d(32)
-        self.maxp2 =  nn.MaxPool1d(5)
+        self.maxp2 =  nn.MaxPool1d(7)
         self.layer3 = nn.Conv1d(32, 64, self.kernel_size)
         self.bnorm3 = nn.BatchNorm1d(64)
-        self.maxp3 =  nn.MaxPool1d(7)
+        self.maxp3 =  nn.MaxPool1d(3)
         self.rnn = nn.LSTM(64, self.target_class, self.cell_count, dropout=self.dropout, batch_first=True)
-        self.dense = nn.Linear(127, 1)
+        self.dense = nn.Linear(39, 1)
     
     def forward(self, x):
         x = self.layer1(x)
